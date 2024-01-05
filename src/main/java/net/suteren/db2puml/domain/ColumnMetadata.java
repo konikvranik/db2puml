@@ -12,12 +12,14 @@ import lombok.ToString;
 public class ColumnMetadata extends AbstractDbObjectMetadata {
 	public boolean isFk() {
 		return parent.getForeignKeys().stream()
-			.anyMatch(fk -> Objects.equals(fk.getName(), getName()));
+			.map(FkMetadata::getColumn)
+			.anyMatch(fk -> Objects.equals(fk, getName()));
 	}
 
 	public boolean isPk() {
 		return parent.getPrimaryKeys().stream()
-			.anyMatch(pk -> Objects.equals(pk.getName(), getName()));
+			.map(PkMetadata::getColumn)
+			.anyMatch(pk -> Objects.equals(pk, getName()));
 	}
 
 	private String table;

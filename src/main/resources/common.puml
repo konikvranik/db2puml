@@ -6,16 +6,16 @@
   {method}<<PK>> name (columns)
 !endprocedure
 !procedure column(name, type)
-  {field}name : type
+  {field}<color:#White><&media-record></color> name : type
 !endprocedure
 !procedure primary_key(name, type)
-  {field}<u>name : type <<PK>></u>
+  {field}<color:#GoldenRod><&key></color> <u>name : type <<PK>></u>
 !endprocedure
 !procedure combined_key(name, type)
-  {field}<u><i>name : type <<PK>> <<FK>></i></u>
+  {field}<color:#Brown><&key></color> <u><i>name : type <<PK>> <<FK>></i></u>
 !endprocedure
 !procedure foreign_key(name, type)
-  {field}<i>name : type <<FK>></i>
+  {field}<color:#Silver><&key></color> <i>name : type <<FK>></i>
 !endprocedure
 !procedure index_column(name, columns)
   {method}<<index>> name (columns)
