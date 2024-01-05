@@ -9,11 +9,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 
 import net.suteren.db2puml.domain.AbstractDbObjectInfo;
 import net.suteren.db2puml.domain.AbstractDbObjectMetadata;
@@ -49,7 +52,11 @@ class DbMetadataRenderer {
 					.filter(it -> CollectionUtils.isEmpty(tableTypes) || tableTypes.contains(it.getType()))
 					.toList();
 				tables.forEach(t -> renderTable(out, t, schema));
-				tables.forEach(t -> t.getForeignKeys().forEach(f -> renderImportedKey(out, f, schema)));
+				tables.forEach(t -> t.getForeignKeys()
+					.stream().collect(
+						Collectors.groupingBy(fkMetadata -> Triple.of(fkMetadata.getName(), fkMetadata.getTable(), fkMetadata.getReference().getTable()),
+							Collectors.toList())).values()
+					.forEach(f -> renderImportedKey(out, f)));
 				out.println("}");
 			});
 
@@ -74,7 +81,7 @@ class DbMetadataRenderer {
 		} else {
 			return;
 		}
-		out.printf("(%s) %s{%n", table.getName(),table.getType().startsWith("SYSTEM") ? "<<system>> #Pink " : "");
+		out.printf("(%s) %s{%n", table.getName(), table.getType().startsWith("SYSTEM") ? "<<system>> #Pink " : "#transparent");
 		table.getColumns().forEach(it -> renderColumn(out, it));
 		table.getPrimaryKeys().stream()
 			.collect(Collectors.groupingBy(AbstractDbObjectInfo::getName, Collectors.toList())).values()
@@ -88,24 +95,37 @@ class DbMetadataRenderer {
 		out.println("  }");
 	}
 
-	static void renderImportedKey(PrintStream out, FkMetadata fk, String schema) {
-		if (StringUtils.isNotEmpty(schema) && !schema.equals(fk.getSchema())) {
-			return;
-		}
+	static void renderImportedKey(PrintStream out, List<FkMetadata> fk) {
+		fk.sort(Comparator.comparing(FkMetadata::getKeySeq));
 		out.print("  ");
-		out.print(fk.getTable());
-		out.print("::");
-		out.print(fk.getColumn());
+		out.print(joinBy(fk, FkMetadata::getTable));
+		if (fk.size() == 1) {
+			out.print("::");
+			out.print(joinBy(fk, FkMetadata::getColumn));
+		}
 		out.print(" \"");
-		out.print(fk.getColumn());
+		out.print(joinBy(fk, FkMetadata::getColumn));
 		out.print("\" --> \"");
-		out.print(fk.getReference().getColumn());
+		out.print(joinBy(fk, f -> f.getReference().getColumn()));
 		out.print("\" ");
-		out.print(fk.getReference().getTable());
-		out.print("::");
-		out.print(fk.getReference().getColumn());
+		out.print(joinBy(fk, f -> f.getReference().getTable()));
+		if (fk.size() == 1) {
+			out.print("::");
+			out.print(joinBy(fk, f -> f.getReference().getColumn()));
+		}
 		out.print(": ");
-		out.println(fk.getName());
+		out.println(joinBy(fk, AbstractDbObjectInfo::getName));
+	}
+
+	private static <T> String joinBy(List<T> fk, Function<T, String> getTable) {
+		return joinBy(fk, getTable, ",");
+	}
+
+	private static <T> String joinBy(List<T> fk, Function<T, String> mapper, String delimiter) {
+		return fk.stream()
+			.map(mapper)
+			.distinct()
+			.collect(Collectors.joining(delimiter));
 	}
 
 	static void renderColumn(PrintStream out, ColumnMetadata columnMetadata) {
@@ -182,7 +202,7 @@ class DbMetadataRenderer {
 			.distinct()
 			.collect(Collectors.joining(","));
 		if (indexMetadata.stream().noneMatch(IndexMetadata::isNonUnique)) {
-			out.printf("unique(\"%s\", \"%s\")%n", indexMetadata.stream().findFirst().map(AbstractDbObjectInfo::getName).orElse(null),columns);
+			out.printf("unique(\"%s\", \"%s\")%n", indexMetadata.stream().findFirst().map(AbstractDbObjectInfo::getName).orElse(null), columns);
 		} else {
 			out.printf("index_column(\"%s\", \"%s\")%n", indexMetadata.stream().findFirst().map(AbstractDbObjectInfo::getName).orElse(null), columns);
 		}
