@@ -2,7 +2,11 @@ import groovy.lang.Grab
 
 plugins {
 	id 'groovy'
+	id 'java-library'
+	id 'maven-publish'
+	id 'signing'
 	id("io.freefair.lombok") version "8.4"
+	id 'jacoco'
 }
 
 repositories {
@@ -27,6 +31,103 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
+compileJava {
+	options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+}
+
+java {
+	withSourcesJar()
+	withJavadocJar()
+}
+
 test {
+	finalizedBy jacocoTestReport // report is always generated after tests run
 	useJUnitPlatform()
+}
+
+
+tasks.register('fatJar', Jar) {
+	manifest {
+		attributes 'Main-Class': 'net.suteren.netatmo.cli.NetatmoCli'
+	}
+	archiveClassifier = 'fatjar'
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+	doLast {
+		outputs.files.each { it.setExecutable(true) }
+	}
+}
+
+tasks.processResources.finalizedBy tasks.register('applicationVersion') {
+	doFirst {
+		new File(sourceSets.main.output.resourcesDir, 'version.properties').write "version=${version}\n"
+	}
+}
+
+artifacts {
+	archives fatJar
+}
+
+publishing {
+	repositories {
+		maven {
+			name = "GitHubPackages"
+			url = uri("https://maven.pkg.github.com/konikvranik/netatmo4j")
+			credentials {
+				username = project.findProperty("gpr.user") ?: System.getenv("GPR_USERNAME")
+				password = project.findProperty("gpr.key") ?: System.getenv("GPR_TOKEN")
+			}
+		}
+		maven {
+			name = "OSSRHPackages"
+			url = uri(version.endsWith('SNAPSHOT')
+					? "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+					: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
+
+			credentials {
+				username = project.findProperty("ossrh.username") ?: System.getenv("OSSRH_USERNAME")
+				password = project.findProperty("ossrh.password") ?: System.getenv("OSSRH_PASSWORD")
+			}
+		}
+	}
+
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+			artifact fatJar
+			pom {
+				name = 'netatmo4j'
+				// optionally artifactId can be defined here
+				description = 'Library to call Netatmo API.'
+				url = 'https://github.com/konikvranik/netatmo4j'
+
+				scm {
+					connection = 'scm:git:https://github.com/konikvranik/netatmo4j.git'
+					developerConnection = 'scm:git:ssh:git@github.com:konikvranik/netatmo4j.git'
+					url = 'https://github.com/konikvranik/netatmo4j/'
+				}
+
+				licenses {
+					license {
+						name = 'The Apache License, Version 2.0'
+						url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+					}
+				}
+
+				developers {
+					developer {
+						id = 'konikvranik'
+						name = 'Petr Vraník'
+						email = 'petr@vranik.name'
+					}
+				}
+			}
+		}
+	}
+}
+
+signing {
+	useInMemoryPgpKeys(findProperty('signing.key') ?: System.getenv('GPG_SIGNING_KEY'), findProperty('signing.password') ?: System.getenv('GPG_SIGNING_PASSWORD'))
+	sign publishing.publications.mavenJava
 }
