@@ -1,0 +1,31 @@
+import groovy.lang.Grab
+
+plugins {
+	id 'groovy'
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.apache.groovy:groovy-all:4.0.14'
+	implementation 'org.apache.ivy:ivy:2.5.2'
+
+	implementation 'org.postgresql:postgresql:42.7.1'
+	implementation 'com.oracle.jdbc:ojdbc10:19.3.0.0'
+	implementation 'org.slf4j:slf4j-api:2.0.10'
+	implementation 'org.slf4j:slf4j-simple:2.0.10'
+	implementation 'info.picocli:picocli-groovy:4.7.4'
+	implementation 'commons-io:commons-io:2.11.0'
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.15.2'
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.2'
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2'
+
+	testImplementation platform('org.junit:junit-bom:5.9.1')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
+}
+
+test {
+	useJUnitPlatform()
+}
