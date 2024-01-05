@@ -1,4 +1,4 @@
-package domain;
+package net.suteren.db2puml.domain;
 
 import lombok.Data;
 

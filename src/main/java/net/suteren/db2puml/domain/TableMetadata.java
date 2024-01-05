@@ -1,11 +1,12 @@
-package domain;
+package net.suteren.db2puml.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-@Data
+@EqualsAndHashCode(callSuper = true) @Data
 public class TableMetadata extends AbstractDbObjectMetadata {
 	private Collection<ColumnMetadata> columns = new ArrayList<ColumnMetadata>();
 	private Collection<PkMetadata> primaryKeys = new ArrayList<PkMetadata>();

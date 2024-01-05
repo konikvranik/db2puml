@@ -1,15 +1,14 @@
-package domain;
+package net.suteren.db2puml.domain;
 
 import java.util.Objects;
 
-import org.codehaus.groovy.runtime.DefaultGroovyMethods;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import groovy.lang.Closure;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
-@Data
+@EqualsAndHashCode(callSuper = true, exclude = "parent") @Data @ToString(exclude = "parent")
 public class ColumnMetadata extends AbstractDbObjectMetadata {
 	public boolean isFk() {
 		return parent.getForeignKeys().stream()

@@ -1,0 +1,32 @@
+!define table(x) class x << (T,#BBAA88) >>
+!define view(x) class x << (V,TECHNOLOGY) >>
+!define index(x) class x << (I,White) >>
+!define sequence(x) class x << (S,BUSINESS) >>
+!procedure pk_index(name, columns)
+  {method}<<PK>> name (columns)
+!endprocedure
+!procedure column(name, type)
+  {field}name : type
+!endprocedure
+!procedure primary_key(name, type)
+  {field}<u>name : type <<PK>></u>
+!endprocedure
+!procedure combined_key(name, type)
+  {field}<u><i>name : type <<PK>> <<FK>></i></u>
+!endprocedure
+!procedure foreign_key(name, type)
+  {field}<i>name : type <<FK>></i>
+!endprocedure
+!procedure index_column(name, columns)
+  {method}<<index>> name (columns)
+!endprocedure
+!procedure fk_constraint(name, col, target, columns)
+  {method}<<FK>> name (col) <&arrow-right> target (columns)
+!endprocedure
+!procedure unique(name, columns)
+  {method}<<unique>> name (columns)
+!endprocedure
+!$null = "<i>NULL</i>"
+
+left to right direction
+hide empty members
