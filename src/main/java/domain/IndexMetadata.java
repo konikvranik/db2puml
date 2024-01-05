@@ -1,20 +1,20 @@
-package net.suteren.db2puml.domain
+package domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import groovy.transform.ToString
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@ToString(excludes = 'parent')
-class IndexMetadata extends AbstractDbObjectInfo {
-	String table
-	String column
-	boolean nonUnique
-	String indexQualifier
-	short type
-	short ordinalPosition
-	String ascOrDesc
-	long cardinality
-	long pages
-	String filterCondition
-	@JsonIgnore
-	TableMetadata parent
+import lombok.Data;
+
+@Data
+public class IndexMetadata extends AbstractDbObjectInfo {
+	private String table;
+	private String column;
+	private boolean nonUnique;
+	private String indexQualifier;
+	private short type;
+	private short ordinalPosition;
+	private String ascOrDesc;
+	private long cardinality;
+	private long pages;
+	private String filterCondition;
+	@JsonIgnore private TableMetadata parent;
 }

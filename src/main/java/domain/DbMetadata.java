@@ -1,12 +1,16 @@
-package net.suteren.db2puml.domain
+package domain;
 
-import groovy.transform.ToString
-import net.suteren.db2puml.domain.TableMetadata
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
-@ToString
-class DbMetadata {
-	final Collection<String> tableTypes = []
-	final Map<String, Collection<String>> catalogs = [:]
-	final Collection<String> schemas = []
-	final Collection<TableMetadata> tables = []
+import lombok.Data;
+
+@Data
+public class DbMetadata {
+	private final Collection<String> tableTypes = new ArrayList<String>();
+	private final Map<String, Collection<String>> catalogs = new LinkedHashMap<String, Collection<String>>();
+	private final Collection<String> schemas = new ArrayList<String>();
+	private final Collection<TableMetadata> tables = new ArrayList<TableMetadata>();
 }

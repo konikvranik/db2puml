@@ -1,10 +1,9 @@
-package net.suteren.db2puml.domain
+package domain;
 
-import groovy.transform.ToString
-import net.suteren.db2puml.domain.AbstractDbObjectInfo
+import lombok.Data;
 
-@ToString
-abstract class AbstractDbObjectMetadata extends AbstractDbObjectInfo {
-	String type
-	String remarks
+@Data
+public abstract class AbstractDbObjectMetadata extends AbstractDbObjectInfo {
+	private String type;
+	private String remarks;
 }

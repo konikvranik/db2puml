@@ -1,35 +1,42 @@
-package net.suteren.db2puml.domain
+package domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import groovy.transform.ToString
+import java.util.Objects;
 
-@ToString(excludes = 'parent')
-class ColumnMetadata extends AbstractDbObjectMetadata {
-	String table
-	int dataType
-	int size
-	Integer decimalDigits
-	int radix
-	int nullable
-	String columnDefinition
-	Integer charOctetLength
-	int ordinalPosition
-	Boolean isNullable
-	ColumnMetadata.ScopeInfo scopeTable = new ColumnMetadata.ScopeInfo()
-	short sourceDataType
-	Boolean isAutoincrement
-	Boolean isGeneratedColumn
-	@JsonIgnore
-	TableMetadata parent
+import org.codehaus.groovy.runtime.DefaultGroovyMethods;
 
-	boolean isFk() {
-		parent.foreignKeys?.any { it.column == name } ?: false
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import groovy.lang.Closure;
+import lombok.Data;
+
+@Data
+public class ColumnMetadata extends AbstractDbObjectMetadata {
+	public boolean isFk() {
+		return parent.getForeignKeys().stream()
+			.anyMatch(fk -> Objects.equals(fk.getName(), getName()));
 	}
 
-	boolean isPk() {
-		parent.primaryKeys?.any { it.column == name } ?: false
+	public boolean isPk() {
+		return parent.getPrimaryKeys().stream()
+			.anyMatch(pk -> Objects.equals(pk.getName(), getName()));
 	}
 
-	@ToString
-	class ScopeInfo extends AbstractDbObjectInfo {}
+	private String table;
+	private int dataType;
+	private int size;
+	private Integer decimalDigits;
+	private int radix;
+	private int nullable;
+	private String columnDefinition;
+	private Integer charOctetLength;
+	private int ordinalPosition;
+	private Boolean isNullable;
+	private ScopeInfo scopeTable = new ScopeInfo();
+	private short sourceDataType;
+	private Boolean isAutoincrement;
+	private Boolean isGeneratedColumn;
+	@JsonIgnore private TableMetadata parent;
+
+	public static class ScopeInfo extends AbstractDbObjectInfo {
+	}
 }

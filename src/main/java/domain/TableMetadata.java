@@ -1,18 +1,21 @@
-package net.suteren.db2puml.domain
+package domain;
 
-import groovy.transform.ToString
+import java.util.ArrayList;
+import java.util.Collection;
 
-@ToString
-class TableMetadata extends AbstractDbObjectMetadata {
-	Collection<ColumnMetadata> columns = []
-	Collection<PkMetadata> primaryKeys = []
-	Collection<FkMetadata> foreignKeys = []
-	Collection<FkMetadata> exportedKeys = []
-	Collection<IndexMetadata> indexes = []
-	TableMetadata.TypeInfo typeInfo = new TableMetadata.TypeInfo()
-	String selfReferencingColumn
-	String generator
+import lombok.Data;
 
-	@ToString
-	class TypeInfo extends AbstractDbObjectInfo {}
+@Data
+public class TableMetadata extends AbstractDbObjectMetadata {
+	private Collection<ColumnMetadata> columns = new ArrayList<ColumnMetadata>();
+	private Collection<PkMetadata> primaryKeys = new ArrayList<PkMetadata>();
+	private Collection<FkMetadata> foreignKeys = new ArrayList<FkMetadata>();
+	private Collection<FkMetadata> exportedKeys = new ArrayList<FkMetadata>();
+	private Collection<IndexMetadata> indexes = new ArrayList<IndexMetadata>();
+	private TypeInfo typeInfo = new TypeInfo();
+	private String selfReferencingColumn;
+	private String generator;
+
+	public static class TypeInfo extends AbstractDbObjectInfo {
+	}
 }

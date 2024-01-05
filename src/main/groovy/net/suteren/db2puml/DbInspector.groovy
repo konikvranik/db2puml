@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper
 import groovy.util.logging.Slf4j
-import net.suteren.db2puml.domain.DbMetadata
+import domain.DbMetadata
 import org.apache.commons.io.FilenameUtils
 import picocli.CommandLine
 

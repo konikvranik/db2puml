@@ -1,23 +1,24 @@
-package net.suteren.db2puml.domain
+package domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import groovy.transform.ToString
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@ToString(excludes = 'parent')
-class FkMetadata extends AbstractDbObjectMetadata {
-	String table
-	String column
-	int keySeq
-	short updateRule
-	short deleteRule
-	short deferrability
-	FkMetadata.ReferenceInfo reference = new FkMetadata.ReferenceInfo()
-	@JsonIgnore
-	TableMetadata parent
+import lombok.Data;
 
-	@ToString
-	class ReferenceInfo extends AbstractDbObjectInfo {
-		String table
-		String column
+@Data
+public class FkMetadata extends AbstractDbObjectMetadata {
+
+	private String table;
+	private String column;
+	private int keySeq;
+	private short updateRule;
+	private short deleteRule;
+	private short deferrability;
+	private ReferenceInfo reference = new ReferenceInfo();
+	@JsonIgnore private TableMetadata parent;
+
+	@Data
+	public static class ReferenceInfo extends AbstractDbObjectInfo {
+		private String table;
+		private String column;
 	}
 }

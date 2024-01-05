@@ -1,12 +1,12 @@
 package net.suteren.db2puml
 
 import groovy.util.logging.Slf4j
-import net.suteren.db2puml.domain.ColumnMetadata
-import net.suteren.db2puml.domain.DbMetadata
-import net.suteren.db2puml.domain.FkMetadata
-import net.suteren.db2puml.domain.IndexMetadata
-import net.suteren.db2puml.domain.PkMetadata
-import net.suteren.db2puml.domain.TableMetadata
+import domain.ColumnMetadata
+import domain.DbMetadata
+import domain.FkMetadata
+import domain.IndexMetadata
+import domain.PkMetadata
+import domain.TableMetadata
 
 import java.sql.Connection
 import java.sql.DatabaseMetaData
