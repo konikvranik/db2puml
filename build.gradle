@@ -18,7 +18,7 @@ dependencies {
 	implementation 'org.apache.ivy:ivy:2.5.2'
 
 	implementation 'org.slf4j:slf4j-api:2.0.11'
-	implementation 'org.slf4j:slf4j-simple:2.0.10'
+	implementation 'org.slf4j:slf4j-simple:2.0.11'
 	implementation 'info.picocli:picocli-groovy:4.7.5'
 	implementation 'org.apache.commons:commons-lang3:3.14.0'
 	implementation 'org.apache.commons:commons-collections4:4.4'
